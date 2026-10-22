@@ -17,7 +17,21 @@
     --accent-purple: #a78bfa;
     --accent-pink: #f472b6;
     --border: rgba(255, 255, 255, 0.08);
+    --glow: 0 0 20px rgba(56, 189, 248, 0.3);
   }
+
+  body.light-mode {
+    --bg-color: #f1f5f9;
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    --border: rgba(0, 0, 0, 0.1);
+    background-image: radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%);
+  }
+  body.light-mode .search-box { background: #fff; color: #0f172a; }
+  body.light-mode .phrase:hover .phrase-main { background: rgba(0,0,0,0.03); }
+  body.light-mode .category h2 { background: rgba(0,0,0,0.05); }
+  body.light-mode .quiz-card { background: #fff; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -33,13 +47,38 @@
     padding: 40px 20px;
     color: var(--text-main);
     overflow-x: hidden;
+    transition: background-color 0.4s, color 0.4s;
   }
 
   .container { max-width: 1200px; margin: 0 auto; }
 
+  .top-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-bottom: 20px;
+    animation: fadeInDown 1s;
+  }
+  .icon-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .icon-btn:hover { transform: translateY(-3px); box-shadow: var(--glow); border-color: var(--accent); }
+
   header {
     text-align: center;
-    padding: 20px 0 40px;
+    padding: 10px 0 40px;
     animation: fadeInDown 1s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
@@ -61,9 +100,31 @@
     animation: fadeIn 1.5s ease;
   }
 
+  .progress-container {
+    width: 100%;
+    background: var(--card-bg);
+    border-radius: 20px;
+    margin-bottom: 30px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    animation: fadeInUp 1s;
+  }
+  .progress-bar {
+    height: 8px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-purple));
+    width: 0%;
+    transition: width 0.5s ease;
+  }
+  .progress-text {
+    padding: 10px 20px;
+    font-size: 0.9em;
+    color: var(--text-muted);
+    text-align: right;
+  }
+
   .search-container {
     position: relative;
-    margin-bottom: 50px;
+    margin-bottom: 30px;
     animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
   }
 
@@ -84,11 +145,9 @@
 
   .search-box:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15), 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15), var(--glow);
     transform: translateY(-2px);
   }
-
-  .search-box::placeholder { color: var(--text-muted); }
 
   .categories-grid {
     display: grid;
@@ -105,26 +164,9 @@
     backdrop-filter: blur(16px);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
-    animation: scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-    position: relative;
+    animation: scaleIn 0.6s backwards;
   }
-
-  .category::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .category:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-  }
-
-  .category:hover::after { opacity: 1; }
+  .category:hover { transform: translateY(-5px); box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3); }
 
   .category h2 {
     background: rgba(255, 255, 255, 0.03);
@@ -136,47 +178,43 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
   }
+  .category h2::after {
+    content: '';
+    position: absolute;
+    left: -100%;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s;
+  }
+  .category:hover h2::after { left: 100%; }
 
   .phrase {
     display: flex;
     flex-direction: column;
     border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
-    overflow: hidden;
+    transition: background 0.3s;
   }
-
   .phrase:last-child { border-bottom: none; }
 
   .phrase-main {
     padding: 20px 28px;
-    transition: padding-left 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s;
-    position: relative;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    transition: all 0.3s;
   }
 
-  .phrase::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background: linear-gradient(to bottom, var(--accent), var(--accent-purple));
-    transform: scaleY(0);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    transform-origin: bottom;
-    z-index: 10;
-  }
+  .phrase-main:hover { background: rgba(255, 255, 255, 0.04); padding-left: 35px; }
 
-  .phrase:hover .phrase-main {
-    background: rgba(255, 255, 255, 0.04);
-    padding-left: 35px;
-  }
-
-  .phrase:hover::before { transform: scaleY(1); }
+  .phrase-content { flex: 1; }
 
   .en {
     font-size: 1.4em;
@@ -187,7 +225,6 @@
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
-    transition: color 0.3s;
   }
 
   .pronunciation {
@@ -197,22 +234,28 @@
     background: rgba(167, 139, 250, 0.12);
     padding: 4px 12px;
     border-radius: 10px;
-    display: inline-block;
     border: 1px solid rgba(167, 139, 250, 0.2);
-    transition: all 0.3s ease;
+    transition: transform 0.3s;
   }
+  .phrase-main:hover .pronunciation { transform: scale(1.05); }
 
-  .phrase:hover .pronunciation {
-    background: rgba(167, 139, 250, 0.2);
-    transform: scale(1.05);
-  }
+  .kg { color: var(--text-muted); font-size: 1.05em; margin-top: 4px; }
 
-  .kg {
+  .action-btns { display: flex; gap: 8px; }
+  .action-btn {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
     color: var(--text-muted);
-    font-size: 1.05em;
-    margin-top: 4px;
-    line-height: 1.4;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2em;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   }
+  .action-btn:hover { background: rgba(255,255,255,0.1); color: var(--text-main); transform: scale(1.1); box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+  .action-btn.fav-active { color: #f472b6; background: rgba(244, 114, 182, 0.15); border-color: #f472b6; }
+  .action-btn.speaking { animation: pulse 1s infinite; color: var(--accent); }
 
   .explanation {
     max-height: 0;
@@ -226,126 +269,103 @@
     max-height: 400px;
     opacity: 1;
     padding: 0 28px 20px 28px;
-    border-top: 1px dashed rgba(255,255,255,0.1);
-    margin-top: 5px;
+    border-top: 1px dashed var(--border);
   }
 
-  .phrase.active .phrase-main {
-    background: rgba(56, 189, 248, 0.08);
-  }
-
-  .phrase.active::before {
-    transform: scaleY(1);
-    background: var(--accent);
-  }
-
-  .explanation-content {
-    padding-top: 15px;
-    font-size: 0.95em;
-    color: #cbd5e1;
-    line-height: 1.6;
-    animation: fadeInUp 0.4s ease;
-  }
-
-  .explanation-content strong { color: var(--accent-pink); font-weight: 600; }
-
+  .explanation-content { padding-top: 15px; font-size: 0.95em; color: #cbd5e1; line-height: 1.6; }
   .explanation-content .note {
-    display: block;
-    margin-top: 10px;
-    font-size: 0.85em;
-    color: var(--text-muted);
-    font-style: italic;
-    background: rgba(255,255,255,0.03);
-    padding: 8px 12px;
-    border-radius: 8px;
-    border-left: 2px solid var(--accent-purple);
+    display: block; margin-top: 10px; font-size: 0.85em; color: var(--text-muted);
+    font-style: italic; background: rgba(255,255,255,0.03); padding: 8px 12px;
+    border-radius: 8px; border-left: 2px solid var(--accent-purple);
   }
 
-  footer {
-    text-align: center;
-    color: var(--text-muted);
-    padding: 60px 0 20px;
-    font-size: 0.9em;
-    animation: fadeIn 2s ease;
+  .quiz-modal {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+    z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(8px);
+    animation: fadeIn 0.3s;
   }
+  .quiz-modal.active { display: flex; }
+  .quiz-card {
+    background: var(--bg-color); width: 90%; max-width: 500px;
+    border-radius: 24px; padding: 30px; border: 1px solid var(--border);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6); text-align: center;
+    animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .quiz-question { font-size: 1.5em; font-weight: 700; margin: 20px 0; color: var(--text-main); animation: fadeInUp 0.4s; }
+  .quiz-options { display: flex; flex-direction: column; gap: 12px; }
+  .quiz-opt {
+    background: var(--card-bg); border: 1px solid var(--border); padding: 15px;
+    border-radius: 12px; cursor: pointer; font-family: inherit; font-size: 1em;
+    color: var(--text-main); transition: all 0.3s;
+  }
+  .quiz-opt:hover { background: rgba(255,255,255,0.1); transform: translateX(5px); }
+  .quiz-opt.correct { background: #16a34a; color: white; border-color: #16a34a; transform: scale(1.02); }
+  .quiz-opt.wrong { background: #dc2626; color: white; border-color: #dc2626; animation: shake 0.3s; }
+  .quiz-result { margin-top: 20px; font-size: 1.2em; font-weight: 600; animation: fadeIn 0.3s; }
 
-  @keyframes fadeInDown {
-    from { opacity: 0; transform: translateY(-40px); }
-    to { opacity: 1; transform: translateY(0); }
+  .fav-modal {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+    z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(8px);
+    animation: fadeIn 0.3s;
   }
-  @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(40px); }
-    to { opacity: 1; transform: translateY(0); }
+  .fav-modal.active { display: flex; }
+  .fav-card {
+    background: var(--bg-color); width: 90%; max-width: 600px; max-height: 80vh;
+    border-radius: 24px; padding: 30px; border: 1px solid var(--border);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6); display: flex; flex-direction: column;
+    animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.95) translateY(20px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  @keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
+  .fav-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+  .fav-header h2 { color: #f472b6; margin: 0; }
+  .fav-list { overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 10px; }
+  .fav-list::-webkit-scrollbar { width: 6px; }
+  .fav-list::-webkit-scrollbar-track { background: transparent; }
+  .fav-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .fav-item { background: var(--card-bg); border: 1px solid var(--border); padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; animation: fadeInUp 0.3s; }
+  .fav-item .en { font-size: 1.1em; margin: 0; }
+  .fav-item .kg { font-size: 0.9em; }
+  .fav-empty { text-align: center; color: var(--text-muted); padding: 40px 0; font-style: italic; }
 
-  ::-webkit-scrollbar { width: 10px; }
-  ::-webkit-scrollbar-track { background: var(--bg-color); }
-  ::-webkit-scrollbar-thumb { background: #334155; border-radius: 5px; border: 2px solid var(--bg-color); }
-  ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  footer { text-align: center; color: var(--text-muted); padding: 60px 0 20px; font-size: 0.9em; }
 
-  @media (max-width: 1000px) {
-    .categories-grid { grid-template-columns: 1fr; }
-  }
+  @keyframes fadeInDown { from { opacity: 0; transform: translateY(-40px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+  @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+  @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.15); box-shadow: 0 0 15px var(--accent); } 100% { transform: scale(1); } }
+  @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
+  @media (max-width: 1000px) { .categories-grid { grid-template-columns: 1fr; } }
   @media (max-width: 600px) {
     body { padding: 15px 10px; }
-    header { padding: 10px 0 25px; }
     header h1 { font-size: 1.8em; }
-    header p { font-size: 0.9em; }
-    
-    .search-container { margin-bottom: 25px; }
-    .search-box {
-      padding: 14px 18px;
-      font-size: 0.95em;
-      border-radius: 14px;
-    }
-    
-    .categories-grid { gap: 15px; }
-    .category { border-radius: 16px; }
-    .category h2 { font-size: 1.05em; padding: 15px 18px; }
-    
-    .phrase-main { padding: 15px 18px; }
-    .phrase:hover .phrase-main { padding-left: 18px; } 
-    .phrase:hover::before { display: none; } 
-    
-    .en { font-size: 1.15em; gap: 8px; }
-    .pronunciation { font-size: 0.7em; padding: 3px 8px; }
-    .kg { font-size: 0.9em; }
-    
-    .phrase.active .explanation {
-      padding: 0 18px 15px 18px;
-      max-height: 600px; 
-    }
-    .explanation-content {
-      font-size: 0.85em;
-      padding-top: 10px;
-    }
-    .explanation-content .note {
-      font-size: 0.8em;
-      padding: 6px 10px;
-    }
+    .phrase-main { padding: 15px 18px; flex-direction: column; align-items: flex-start; }
+    .phrase-main:hover { padding-left: 18px; }
+    .action-btns { width: 100%; justify-content: flex-end; margin-top: 10px; }
+    .en { font-size: 1.15em; }
+    .phrase.active .explanation { padding: 0 18px 15px 18px; max-height: 600px; }
+    .top-bar { flex-wrap: wrap; justify-content: center; }
   }
 </style>
 </head>
 <body>
 <div class="container">
+  <div class="top-bar">
+    <button class="icon-btn" id="themeToggle">🌙 Тема</button>
+    <button class="icon-btn" id="showFavorites" style="background: rgba(244, 114, 182, 0.15); color: #f472b6; border-color: #f472b6;">❤️ Избранное</button>
+    <button class="icon-btn" id="startQuiz" style="background: var(--accent); color: white; border: none;">🎮 Квиз ойноо</button>
+  </div>
+
   <header>
     <h1>English & Kyrgyz 🇬🇧</h1>
-    <p>Нажмите на фразу, чтобы увидеть объяснение и перевод</p>
+    <p>Баскычтарды колдонуп үйрөнүңүз: Үн, Сүйүктүүлөр, Квиз</p>
   </header>
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="progress-text" id="progressText">Үйрөнүлдү: 0 / 0 сөз</div>
+  </div>
 
   <div class="search-container">
     <input type="text" class="search-box" id="search" placeholder="🔍 Найти слово или фразу...">
@@ -353,11 +373,31 @@
 
   <div class="categories-grid" id="phrases"></div>
 
-  <footer>💡 Нажмите на слово/фразу, чтобы прочитать объяснение и скопировать текст</footer>
+  <footer>💡 Нажмите на фразу, чтобы увидеть перевод, или используйте кнопки 🔊 (звук) и ❤️ (сохранить)</footer>
+</div>
+
+<div class="quiz-modal" id="quizModal">
+  <div class="quiz-card">
+    <h2 style="color: var(--accent);">🎮 Квиз</h2>
+    <p style="color: var(--text-muted); margin-top: 10px;">Туура котормону тандаңыз</p>
+    <div class="quiz-question" id="quizQuestion">Жүктөлүүдө...</div>
+    <div class="quiz-options" id="quizOptions"></div>
+    <div class="quiz-result" id="quizResult"></div>
+    <button class="icon-btn" onclick="document.getElementById('quizModal').classList.remove('active')" style="margin-top: 20px; width: 100%;">Жабуу</button>
+  </div>
+</div>
+
+<div class="fav-modal" id="favModal">
+  <div class="fav-card">
+    <div class="fav-header">
+      <h2>❤️ Избранное</h2>
+      <button class="icon-btn" onclick="document.getElementById('favModal').classList.remove('active')">✖ Жабуу</button>
+    </div>
+    <div class="fav-list" id="favList"></div>
+  </div>
 </div>
 
 <script>
-// 🚀 МАКСИМАЛЬНО РАСШИРЕННАЯ БАЗА (РАЗГОВОРНЫЙ АНГЛИЙСКИЙ)
 const data = [
   {
     category: "👤 Өзүм жөнүндө айтуу (О себе)",
@@ -375,169 +415,176 @@ const data = [
   {
     category: "👋 Приветствия и прощания (Саламдашуу)",
     items: [
-      { en: "Hello", pron: "хэ-лоу", kg: "Салам / Саламдашуу", desc: "Эң көп колдонулган жана <strong>универсалдуу</strong> саламдашуу. Досуңарга да, расмий адамдарга да айта аласыз.", note: "Кыскартылган түрү: 'Hi' (хай) — жакын досторго." },
-      { en: "Hi", pron: "хай", kg: "Салам (бейрасмий)", desc: "Расмий эмес, достор же жакын тааныштар менен саламдашууда колдонулат.", note: "Көбүнчө жаштар жана достор арасында колдонулат." },
-      { en: "Hey", pron: "хэй", kg: "Эй / Салам", desc: "Абдан бейрасмий, көбүнчө жакын досторго же тааныштарга айтылат.", note: "Расмий жерлерде колдонууга болбойт." },
-      { en: "What's up?", pron: "уотс ап", kg: "Эмне жаңылык? / Кандайсың?", desc: "Достор менен бейрасмий саламдашуу. Жөн гана 'Салам' деген мааниде.", note: "Жооп: 'Not much' (нот мач) — 'Эч нерсе эмес'." },
-      { en: "Good morning", pron: "гуд мо-нинг", kg: "Куттуу таң", desc: "Эртең мененки саламдашуу. Таңкы саат 12ге чейин колдонулат.", note: "Расмий жана жарым расмий жерлерде ылайыктуу." },
-      { en: "Good afternoon", pron: "гуд аф-тэ-нун", kg: "Кайырлуу күн", desc: "Түштөн кийинки саламдашуу (12:00дөн 18:00гө чейин).", note: "Көбүнчө расмий жолугушууларда колдонулат." },
-      { en: "Good evening", pron: "гуд ив-нинг", kg: "Кайырлуу кеч", desc: "Кечки саламдашуу (18:00дөн кийин).", note: "Коомдук жайларда же кечки жолугушууларда колдонулат." },
-      { en: "Goodbye", pron: "гуд-бай", kg: "Кош болуңуз", desc: "Жалпы коштошуу сөзү. Расмий жана бейрасмий жерлерде колдонулат.", note: "Кыскартылган түрү: 'Bye' (бай) — достор менен." },
-      { en: "See you later", pron: "си ю лэй-тэ", kg: "Көрүшкөнчө", desc: "Жакында кайра көрүшө турган адамдар менен коштошуу.", note: "Досторго жана тааныштарга ылайыктуу." },
-      { en: "Take care", pron: "тэйк кээ", kg: "Өзүңдү күнөөлө / Аман бол", desc: "Коштошууда айтылат, камкордук билдирүү.", note: "Жакын адамдарга айтууга жакшы." },
-      { en: "Good night", pron: "гуд найт", kg: "Жакшы түн / Тынч укта", desc: "Уктоого жатар алдында айтылат.", note: "Көбүнчө үй-бүлө жана жакын адамдар менен колдонулат." },
-      { en: "Long time no see", pron: "лонг тайм ноу си", kg: "Көрүшпөй калдык / Көптөн бери көрүшпөдүк", desc: "Узак убакыттан кийин жолукканда айтылат.", note: "Достор менен жолукканда жылуу сөз." }
+      { en: "Hello", pron: "хэ-лоу", kg: "Салам / Саламдашуу", desc: "Эң көп колдонулган жана универсалдуу саламдашуу.", note: "Кыскартылган түрү: 'Hi' (хай) — жакын досторго." },
+      { en: "Hi", pron: "хай", kg: "Салам (бейрасмий)", desc: "Расмий эмес, достор менен саламдашууда.", note: "Көбүнчө жаштар арасында." },
+      { en: "Hey", pron: "хэй", kg: "Эй / Салам", desc: "Абдан бейрасмий, көбүнчө жакын досторго.", note: "Расмий жерлерде колдонууга болбойт." },
+      { en: "What's up?", pron: "уотс ап", kg: "Эмне жаңылык?", desc: "Достор менен бейрасмий саламдашуу.", note: "Жооп: 'Not much' (нот мач)." },
+      { en: "Good morning", pron: "гуд мо-нинг", kg: "Куттуу таң", desc: "Эртең мененки саламдашуу.", note: "Расмий жана жарым расмий." },
+      { en: "Good afternoon", pron: "гуд аф-тэ-нун", kg: "Кайырлуу күн", desc: "Түштөн кийинки саламдашуу.", note: "Көбүнчө расмий." },
+      { en: "Good evening", pron: "гуд ив-нинг", kg: "Кайырлуу кеч", desc: "Кечки саламдашуу.", note: "Коомдук жайларда." },
+      { en: "Goodbye", pron: "гуд-бай", kg: "Кош болуңуз", desc: "Жалпы коштошуу сөзү.", note: "Кыскартылган түрү: 'Bye' (бай)." },
+      { en: "See you later", pron: "си ю лэй-тэ", kg: "Көрүшкөнчө", desc: "Жакында кайра көрүшө тургандарга.", note: "Досторго ылайыктуу." },
+      { en: "Take care", pron: "тэйк кээ", kg: "Аман бол", desc: "Коштошууда камкордук билдирүү.", note: "Жакын адамдарга." },
+      { en: "Good night", pron: "гуд найт", kg: "Жакшы түн", desc: "Уктоого жатар алдында.", note: "Үй-бүлө менен." },
+      { en: "Long time no see", pron: "лонг тайм ноу си", kg: "Көрүшпөй калдык", desc: "Узак убакыттан кийин жолукканда.", note: "Жылуу сөз." }
     ]
   },
   {
     category: "🙏 Вежливость и благодарность (Ыраазычылык)",
     items: [
-      { en: "Thank you", pron: "сэнк ю", kg: "Рахмат / Ыракмат", desc: "Эң негизги ыраазычылык билдирүү. Расмий жана бейрасмий жерлерде колдонулат.", note: "Кыскартылган түрү: 'Thanks' (сэнкс) — достор менен." },
-      { en: "Thanks a lot", pron: "сэнкс э лот", kg: "Чоң рахмат", desc: "Күчтүү ыраазычылык билдирүү.", note: "Расмий түрү: 'Thank you very much'." },
-      { en: "Please", pron: "плииз", kg: "Өтүнөм / Сураныч", desc: "Бир нерсе сураганда же сылыктык менен айтканда колдонулат.", note: "Мисалы: 'Please help me' — 'Сураныч, мага жардам бериңиз'." },
-      { en: "Sorry", pron: "со-ри", kg: "Кечириңиз / Кечир", desc: "Кечирим суроо үчүн колдонулат. Же бир нерсеге өкүнүч билдиргенде.", note: "Расмий түрү: 'I am sorry' (ай эм со-ри)." },
-      { en: "Excuse me", pron: "экс-кьюз ми", kg: "Кечириңиз (көңүл бурдуруу)", desc: "Бирөөнүн көңүлүн бурдуруу же жол суроо үчүн колдонулат.", note: "Мисалы: 'Excuse me, where is the station?'" },
-      { en: "You're welcome", pron: "юр уэл-кэм", kg: "Арзыбайт / Эч нерсе эмес", desc: "'Рахмат' дегенге жооп катары айтылат.", note: "Расмий түрү: 'Not at all' (нот эт ол)." },
-      { en: "No problem", pron: "ноу проб-лэм", kg: "Көйгөй жок / Маселе эмес", desc: "Жеңил жооп, 'Рахмат' дегенге же кечирим сураганга.", note: "Көбүнчө достор арасында." }
+      { en: "Thank you", pron: "сэнк ю", kg: "Рахмат / Ыракмат", desc: "Эң негизги ыраазычылык билдирүү.", note: "Кыскартылган түрү: 'Thanks'." },
+      { en: "Thanks a lot", pron: "сэнкс э лот", kg: "Чоң рахмат", desc: "Күчтүү ыраазычылык.", note: "Расмий түрү: 'Thank you very much'." },
+      { en: "Please", pron: "плииз", kg: "Өтүнөм / Сураныч", desc: "Бир нерсе сураганда.", note: "Мисалы: 'Please help me'." },
+      { en: "Sorry", pron: "со-ри", kg: "Кечириңиз", desc: "Кечирим суроо үчүн.", note: "Расмий түрү: 'I am sorry'." },
+      { en: "Excuse me", pron: "экс-кьюз ми", kg: "Кечириңиз (көңүл бурдуруу)", desc: "Көңүл бурдуруу же жол суроо үчүн.", note: "Мисалы: 'Excuse me, where is the station?'" },
+      { en: "You're welcome", pron: "юр уэл-кэм", kg: "Арзыбайт / Эч нерсе эмес", desc: "'Рахмат' дегенге жооп.", note: "Расмий түрү: 'Not at all'." },
+      { en: "No problem", pron: "ноу проб-лэм", kg: "Көйгөй жок", desc: "Жеңил жооп.", note: "Көбүнчө достор арасында." }
     ]
   },
   {
     category: "🗣️ Базовые ответы (Негизги жооптор)",
     items: [
-      { en: "Yes", pron: "йес", kg: "Ооба / Макул", desc: "Ырастоо үчүн колдонулат.", note: "Бейрасмий түрү: 'Yeah' (йе) — достор менен." },
-      { en: "No", pron: "ноу", kg: "Жок", desc: "Тануу же макул эместик билдирүү үчүн.", note: "Бейрасмий түрү: 'Nope' (ноп) — достор менен." },
-      { en: "Maybe", pron: "мэй-би", kg: "Балким / Мүмкүн", desc: "Толук эмес жооп. Так эмес учурда колдонулат.", note: "Мисалы: 'Maybe I will come' — 'Балким мен барам'." },
-      { en: "I don't know", pron: "ай донт ноу", kg: "Мен билбейм", desc: "Билбестик билдирүү үчүн колдонулат.", note: "Кыскартылган түрү: 'Dunno' (данноу) — бейрасмий." },
-      { en: "I understand", pron: "ай ан-дэ-стэнд", kg: "Мен түшүндүм", desc: "Бир нерсени түшүнгөндүктү билдирүү үчүн.", note: "Түшүнбөсөңүз: 'I don't understand' (ай донт ан-дэ-стэнд)." },
-      { en: "Of course", pron: "ов кос", kg: "Албетте", desc: "Макулдук билдирүү, такыр каршы эместик.", note: "Достор менен: 'Sure' (шур)." },
-      { en: "I agree", pron: "ай эг-ри", kg: "Мен макулмун", desc: "Башка адамдын пикирине кошулганда.", note: "Карама-каршы: 'I disagree' (ай дис-эг-ри)." }
+      { en: "Yes", pron: "йес", kg: "Ооба / Макул", desc: "Ырастоо үчүн.", note: "Бейрасмий түрү: 'Yeah'." },
+      { en: "No", pron: "ноу", kg: "Жок", desc: "Тануу үчүн.", note: "Бейрасмий түрү: 'Nope'." },
+      { en: "Maybe", pron: "мэй-би", kg: "Балким", desc: "Толук эмес жооп.", note: "Мисалы: 'Maybe I will come'." },
+      { en: "I don't know", pron: "ай донт ноу", kg: "Мен билбейм", desc: "Билбестик билдирүү.", note: "Кыскартылган түрү: 'Dunno'." },
+      { en: "I understand", pron: "ай ан-дэ-стэнд", kg: "Мен түшүндүм", desc: "Түшүнгөндүктү билдирүү.", note: "Түшүнбөсөңүз: 'I don't understand'." },
+      { en: "Of course", pron: "ов кос", kg: "Албетте", desc: "Макулдук билдирүү.", note: "Достор менен: 'Sure'." },
+      { en: "I agree", pron: "ай эг-ри", kg: "Мен макулмун", desc: "Башка адамдын пикирине кошулганда.", note: "Карама-каршы: 'I disagree'." }
     ]
   },
   {
     category: "🙋 Знакомство и общение (Таанышуу)",
     items: [
-      { en: "What is your name?", pron: "уот из ё нэйм", kg: "Сиздин атыңыз ким?", desc: "Таанышуудагы эң негизги суроо.", note: "Бейрасмий түрү: 'What's your name?' (уотс ё нэйм)." },
-      { en: "My name is...", pron: "май нэйм из...", kg: "Менин атым...", desc: "Өз атыңызды айтуу үчүн колдонулат.", note: "Мисалы: 'My name is Asan' — 'Менин атым Асан'." },
-      { en: "Nice to meet you", pron: "найс ту мит ю", kg: "Таанышканыма кубанычтамын", desc: "Жаңы адам менен таанышканда айтылат. Сылыктык белгиси.", note: "Расмий түрү: 'Pleased to meet you' (плизд ту мит ю)." },
-      { en: "Where are you from?", pron: "уэ ар ю фром", kg: "Сиз кайдан болосуз?", desc: "Адамдын келип чыккан жери менен кызыкканда суралат.", note: "Жооп: 'I am from Kyrgyzstan' (ай эм фром кыргызстан)." },
-      { en: "How are you?", pron: "хау ар ю", kg: "Кандайсыз? / Кандайсың?", desc: "Абал суроо. Жөн гана сылыктык үчүн айтылат.", note: "Бейрасмий түрү: 'How's it going?' (хауз ит гоуинг)." },
-      { en: "I am fine, thanks", pron: "ай эм файн, сэнкс", kg: "Мен жакшы, рахмат", desc: "Абал суроого стандарттуу жооп.", note: "Башка жооптор: 'Not bad' (нот бэд) — 'Жаман эмес'." },
-      { en: "How old are you?", pron: "хау оулд ар ю", kg: "Канча жаштасыз?", desc: "Жашын суроо.", note: "Кээ бир маданияттарда бул суроо жеке маалымат болушу мүмкүн." },
-      { en: "What do you do?", pron: "уот ду ю ду", kg: "Эмне иш кыласыз? / Кесибиңиз ким?", desc: "Адамдын иши же кесиби менен кызыгуу.", note: "Жооп: 'I am a student' (ай эм э стью-дэнт)." },
-      { en: "Do you speak English?", pron: "ду ю спик инг-лиш", kg: "Сиз англисче сүйлөйсүзбү?", desc: "Эгер сиз англисче сүйлөбөсөңүз, бул суроо пайдалуу.", note: "Жооп: 'A little' (э литл) — 'Аздыр-көптүр'." }
+      { en: "What is your name?", pron: "уот из ё нэйм", kg: "Сиздин атыңыз ким?", desc: "Таанышуудагы суроо.", note: "Бейрасмий түрү: 'What's your name?'." },
+      { en: "My name is...", pron: "май нэйм из...", kg: "Менин атым...", desc: "Өз атыңызды айтуу.", note: "Мисалы: 'My name is Asan'." },
+      { en: "Nice to meet you", pron: "найс ту мит ю", kg: "Таанышканыма кубанычтамын", desc: "Жаңы адам менен таанышканда.", note: "Расмий түрү: 'Pleased to meet you'." },
+      { en: "Where are you from?", pron: "уэ ар ю фром", kg: "Сиз кайдан болосуз?", desc: "Кайдан болгонун суроо.", note: "Жооп: 'I am from Kyrgyzstan'." },
+      { en: "How are you?", pron: "хау ар ю", kg: "Кандайсыз?", desc: "Абал суроо.", note: "Бейрасмий түрү: 'How's it going?'." },
+      { en: "I am fine, thanks", pron: "ай эм файн, сэнкс", kg: "Мен жакшы, рахмат", desc: "Абал суроого жооп.", note: "Башка жооптор: 'Not bad'." },
+      { en: "How old are you?", pron: "хау оулд ар ю", kg: "Канча жаштасыз?", desc: "Жашын суроо.", note: "Кээ бир маданияттарда жеке маалымат." },
+      { en: "What do you do?", pron: "уот ду ю ду", kg: "Эмне иш кыласыз?", desc: "Кесиби менен кызыгуу.", note: "Жооп: 'I am a student'." },
+      { en: "Do you speak English?", pron: "ду ю спик инг-лиш", kg: "Сиз англисче сүйлөйсүзбү?", desc: "Эгер сүйлөбөсөңүз.", note: "Жооп: 'A little'." }
     ]
   },
   {
     category: "🍔 Еда и напитки (Тамак-аш)",
     items: [
-      { en: "Water", pron: "уо-тэ", kg: "Суу", desc: "Эң негизги ичимдик.", note: "Муздак суу: 'Cold water' (коулд уо-тэ)." },
-      { en: "Food", pron: "фуд", kg: "Тамак", desc: "Жалпы тамак-аш.", note: "Даамдуу тамак: 'Delicious food' (ди-ли-шэс фуд)." },
-      { en: "Bread", pron: "брэд", kg: "Нан", desc: "Нан азыгы.", note: "Кумшек нан: 'Bun' (бан)." },
-      { en: "Meat", pron: "мит", kg: "Эт", desc: "Эт азыгы.", note: "Тоок эти: 'Chicken' (чи-кен)." },
-      { en: "I am hungry", pron: "ай эм хан-гри", kg: "Мен ачкамын", desc: "Ачкачылыкты билдирүү.", note: "Антоним: 'I am full' (ай эм фул) — 'Мен тоюм'." },
-      { en: "Menu", pron: "мэ-ню", kg: "Меню", desc: "Ресторандагы тамактардын тизмеси.", note: "Меню суроо: 'Can I see the menu?'" },
-      { en: "Bill / Check", pron: "бил / чек", kg: "Эсеп / Чек", desc: "Ресторанда тамак ичкенден кийин төлөө үчүн.", note: "Айтыңыз: 'Can I have the bill, please?'" },
-      { en: "It is delicious", pron: "ит из ди-ли-шэс", kg: "Бул даамдуу", desc: "Тамак жакканда айтылат. Ашпозчуга жагымдуу болот.", note: "Кыскача: 'Yummy!' (ям-ми) — бейрасмий." },
-      { en: "I am allergic to...", pron: "ай эм э-лэр-джик ту...", kg: "Менде ... аллергия бар", desc: "Тамак-аш аллергиясын билдирүү. Абдан маанилүү.", note: "Мисалы: 'I am allergic to nuts' (ай эм э-лэр-джик ту натс)." },
-      { en: "Can I have the menu, please?", pron: "кэн ай хэв зэ мэ-ню, плииз", kg: "Менюну бере аласызбы, сураныч?", desc: "Ресторанда отургандан кийин меню суроо.", note: "Сылыктык менен айтыңыз." }
+      { en: "Water", pron: "уо-тэ", kg: "Суу", desc: "Эң негизги ичимдик.", note: "Муздак суу: 'Cold water'." },
+      { en: "Food", pron: "фуд", kg: "Тамак", desc: "Жалпы тамак-аш.", note: "Даамдуу: 'Delicious food'." },
+      { en: "Bread", pron: "брэд", kg: "Нан", desc: "Нан азыгы.", note: "Кумшек нан: 'Bun'." },
+      { en: "Meat", pron: "мит", kg: "Эт", desc: "Эт азыгы.", note: "Тоок эти: 'Chicken'." },
+      { en: "I am hungry", pron: "ай эм хан-гри", kg: "Мен ачкамын", desc: "Ачкачылыкты билдирүү.", note: "Антоним: 'I am full'." },
+      { en: "Menu", pron: "мэ-ню", kg: "Меню", desc: "Тамактардын тизмеси.", note: "Меню суроо: 'Can I see the menu?'." },
+      { en: "Bill / Check", pron: "бил / чек", kg: "Эсеп / Чек", desc: "Төлөө үчүн.", note: "Айтыңыз: 'Can I have the bill, please?'." },
+      { en: "It is delicious", pron: "ит из ди-ли-шэс", kg: "Бул даамдуу", desc: "Тамак жакканда.", note: "Кыскача: 'Yummy!'." },
+      { en: "I am allergic to...", pron: "ай эм э-лэр-джик ту...", kg: "Менде ... аллергия бар", desc: "Аллергияны билдирүү.", note: "Мисалы: 'I am allergic to nuts'." },
+      { en: "Can I have the menu, please?", pron: "кэн ай хэв зэ мэ-ню, плииз", kg: "Менюну бере аласызбы?", desc: "Меню суроо.", note: "Сылыктык менен." }
     ]
   },
   {
     category: "🚕 Транспорт и навигация (Жол көрсөтүү)",
     items: [
-      { en: "Where is the toilet?", pron: "уэ из зэ той-лет", kg: "Даараткана кайда?", desc: "Эң керектүү суроолордун бири.", note: "Америкада 'restroom' (рест-рум) деп аталат." },
-      { en: "How much is it?", pron: "хау мач из ит", kg: "Бул канча турат?", desc: "Баасын суроо үчүн колдонулат.", note: "Таксиде же дүкөндө." },
-      { en: "Stop here, please", pron: "стоп хиэ, плииз", kg: "Бул жерде токтотуңуз, сураныч", desc: "Таксистке же автобус айдоочусуна айтылат.", note: "Англияда 'Stop here' деп айтышат." },
-      { en: "Where is the station?", pron: "уэ из зэ стэй-шэн", kg: "Вокзал/станция кайда?", desc: "Метро, автобус же поезд станциясын суроо.", note: "Метро: 'Subway' (саб-уэй) — АКШда, 'Underground' (ан-дэ-граунд) — Улуу Британияда." },
-      { en: "I need a taxi", pron: "ай нид э так-си", kg: "Мага такси керек", desc: "Такси чакыруу же суроо.", note: "Таксилер көбүнчө карта менен төлөнөт." },
-      { en: "Turn left", pron: "тён лефт", kg: "Солго бурулуңуз", desc: "Жол көрсөтүү.", note: "Оңго: 'Turn right' (тён райт)." },
-      { en: "Go straight", pron: "гоу стрэйт", kg: "Түз барыңыз", desc: "Жол көрсөтүү.", note: "Артка: 'Go back' (гоу бэк)." },
-      { en: "How far is it?", pron: "хау фар из ит", kg: "Канчалык алыс?", desc: "Аралыкты суроо.", note: "Жакын: 'It is near' (ит из ниэ)." }
+      { en: "Where is the toilet?", pron: "уэ из зэ той-лет", kg: "Даараткана кайда?", desc: "Керектүү суроо.", note: "АКШда 'restroom'." },
+      { en: "How much is it?", pron: "хау мач из ит", kg: "Бул канча турат?", desc: "Баасын суроо.", note: "Таксиде же дүкөндө." },
+      { en: "Stop here, please", pron: "стоп хиэ, плииз", kg: "Бул жерде токтотуңуз", desc: "Таксистке айтуу.", note: "Англияда 'Stop here'." },
+      { en: "Where is the station?", pron: "уэ из зэ стэй-шэн", kg: "Вокзал/станция кайда?", desc: "Станцияны суроо.", note: "Метро: 'Subway'." },
+      { en: "I need a taxi", pron: "ай нид э так-си", kg: "Мага такси керек", desc: "Такси чакыруу.", note: "Карта менен төлөнөт." },
+      { en: "Turn left", pron: "тён лефт", kg: "Солго бурулуңуз", desc: "Жол көрсөтүү.", note: "Оңго: 'Turn right'." },
+      { en: "Go straight", pron: "гоу стрэйт", kg: "Түз барыңыз", desc: "Жол көрсөтүү.", note: "Артка: 'Go back'." },
+      { en: "How far is it?", pron: "хау фар из ит", kg: "Канчалык алыс?", desc: "Аралыкты суроо.", note: "Жакын: 'It is near'." }
     ]
   },
   {
     category: "🆘 Экстренные ситуации (Кырсык)",
     items: [
-      { en: "Help!", pron: "хэлп", kg: "Жардам бериңиз!", desc: "Кырсык учурунда жардам суроо.", note: "Кыска жана так айтыңыз." },
-      { en: "Call the police", pron: "кол зэ по-лис", kg: "Полицияны чакырыңыз", desc: "Укук бузуу же коркунуч учурунда.", note: "АКШда 911, Улуу Британияда 999." },
-      { en: "I need a doctor", pron: "ай нид э док-тэ", kg: "Мага дарыгер керек", desc: "Ден соолук начарлаганда.", note: "Оорукана: 'Hospital' (хос-пи-тал)." },
-      { en: "I am lost", pron: "ай эм лост", kg: "Мен адашып калдым", desc: "Жол таппай калганда.", note: "Карта суроо: 'Can you show me on the map?'" },
-      { en: "I don't feel well", pron: "ай донт фил уэл", kg: "Мен өзүмдү начар сезип жатам", desc: "Ден соолук начарлаганда.", note: "Дарыгерге баруу керек." },
-      { en: "Where is the hospital?", pron: "уэ из зэ хос-пи-тал", kg: "Оорукана кайда?", desc: "Медициналык жардам керек болгондо.", note: "Тез жардам: 'Ambulance' (эм-бью-лэнс)." }
+      { en: "Help!", pron: "хэлп", kg: "Жардам бериңиз!", desc: "Жардам суроо.", note: "Кыска жана так." },
+      { en: "Call the police", pron: "кол зэ по-лис", kg: "Полицияны чакырыңыз", desc: "Коркунуч учурунда.", note: "АКШда 911." },
+      { en: "I need a doctor", pron: "ай нид э док-тэ", kg: "Мага дарыгер керек", desc: "Ден соолук начарлаганда.", note: "Оорукана: 'Hospital'." },
+      { en: "I am lost", pron: "ай эм лост", kg: "Мен адашып калдым", desc: "Жол таппай калганда.", note: "Карта суроо." },
+      { en: "I don't feel well", pron: "ай донт фил уэл", kg: "Мен өзүмдү начар сезип жатам", desc: "Ден соолук начарлаганда.", note: "Дарыгерге баруу." },
+      { en: "Where is the hospital?", pron: "уэ из зэ хос-пи-тал", kg: "Оорукана кайда?", desc: "Медициналык жардам.", note: "Тез жардам: 'Ambulance'." }
     ]
   },
   {
     category: "💬 Сленг и разговорные фразы (Сленг)",
     items: [
-      { en: "Cool", pron: "куул", kg: "Круто / Сонун", desc: "Бир нерсе жакканда, сонун көрүнгөндө айтылат.", note: "Ушундай эле мааниде: 'Awesome' (о-сэм)." },
-      { en: "OMG (Oh my God)", pron: "оу май год", kg: "Оо, Кудайым!", desc: "Таң калуу, шок болуу.", note: "Көбүнчө жаштар арасында." },
-      { en: "Chill", pron: "чил", kg: "Тынч / Эс ал", desc: "Бир нерсени тынч алуу, же 'эс ал' деген мааниде.", note: "Мисалы: 'Chill out!' — 'Тынчтангын!'." },
-      { en: "What the heck?", pron: "уот зэ хэк", kg: "Бул эмне деген? / Эмне болду?", desc: "Таң калуу же түшүнбөстүк.", note: "Грубая форма: 'What the hell?' (уот зэ хэл)." },
-      { en: "No way!", pron: "ноу уэй", kg: "Мүмкүн эмес! / Жок!", desc: "Ишенбөө, таң калуу.", note: "Достор менен." },
-      { en: "I'm broke", pron: "айм броук", kg: "Менде акча жок", desc: "Акча жоктугун билдирүү, бейрасмий.", note: "Расмий түрү: 'I don't have money'." },
-      { en: "Let's go", pron: "летс гоу", kg: "Кеттик / Жүр", desc: "Бир жакка барууга чакыруу.", note: "Достор менен." },
-      { en: "I'm in", pron: "айм ин", kg: "Мен кошулам", desc: "Бир иш-чарага же планга макулдук берүү.", note: "Бейрасмий." },
-      { en: "Never mind", pron: "нэ-вэ майнд", kg: "Эч нерсе эмес / Кой", desc: "Бир нерсе маанилүү эмес экендигин билдирүү.", note: "Кечирим сураганда же ойлонбоо керек болгондо." }
+      { en: "Cool", pron: "куул", kg: "Круто / Сонун", desc: "Бир нерсе жакканда.", note: "Ушундай эле: 'Awesome'." },
+      { en: "OMG (Oh my God)", pron: "оу май год", kg: "Оо, Кудайым!", desc: "Таң калуу.", note: "Жаштар арасында." },
+      { en: "Chill", pron: "чил", kg: "Тынч / Эс ал", desc: "Тынч алуу.", note: "Мисалы: 'Chill out!'." },
+      { en: "What the heck?", pron: "уот зэ хэк", kg: "Бул эмне деген?", desc: "Таң калуу.", note: "Грубая форма: 'What the hell?'." },
+      { en: "No way!", pron: "ноу уэй", kg: "Мүмкүн эмес!", desc: "Ишенбөө.", note: "Достор менен." },
+      { en: "I'm broke", pron: "айм броук", kg: "Менде акша жок", desc: "Акча жоктугу.", note: "Расмий эмес." },
+      { en: "Let's go", pron: "летс гоу", kg: "Кеттик / Жүр", desc: "Барууга чакыруу.", note: "Достор менен." },
+      { en: "I'm in", pron: "айм ин", kg: "Мен кошулам", desc: "Макулдук берүү.", note: "Бейрасмий." },
+      { en: "Never mind", pron: "нэ-вэ майнд", kg: "Эч нерсе эмес / Кой", desc: "Маанилүү эмес.", note: "Кечирим сураганда." }
     ]
   },
   {
     category: "🛍️ Покупки и шоппинг (Дүкөндө)",
     items: [
-      { en: "How much is this?", pron: "хау мач из зис", kg: "Бул канча турат?", desc: "Дүкөндө баа суроо.", note: "Көп нерсе үчүн: 'How much are these?'" },
-      { en: "I am just looking", pron: "ай эм жаст лу-кинг", kg: "Мен жөн гана карап жатам", desc: "Сатуучунун сунушунан баш тартуу.", note: "Сылыктык менен айтыңыз." },
-      { en: "Can I try it on?", pron: "кэн ай трай ит он", kg: "Кийип көрсөм болобу?", desc: "Кийимди кийип көрүү үчүн уруксат суроо.", note: "Аялдарга жана эркектерге." },
-      { en: "It is too expensive", pron: "ит из ту экс-пэн-сив", kg: "Бул өтө кымбат", desc: "Баасы жогору болгондо.", note: "Арзаныраак сунуш: 'Do you have a cheaper one?'" },
-      { en: "I will take it", pron: "ай уил тэйк ит", kg: "Мен муну алам", desc: "Сатып алуу чечимин билдирүү.", note: "Кассага барыңыз." },
-      { en: "Do you accept credit cards?", pron: "ду ю эк-сэпт крэ-дит кардз", kg: "Сиз кредиттик карталарды кабыл аласызбы?", desc: "Төлөм ыкмасын тактоо.", note: "Көп жерлерде карта кабыл алынат." }
+      { en: "How much is this?", pron: "хау мач из зис", kg: "Бул канча турат?", desc: "Баа суроо.", note: "Көп нерсе үчүн: 'How much are these?'." },
+      { en: "I am just looking", pron: "ай эм жаст лу-кинг", kg: "Мен жөн гана карап жатам", desc: "Баш тартуу.", note: "Сылыктык менен." },
+      { en: "Can I try it on?", pron: "кэн ай трай ит он", kg: "Кийип көрсөм болобу?", desc: "Кийимди кийип көрүү.", note: "Уруксат суроо." },
+      { en: "It is too expensive", pron: "ит из ту экс-пэн-сив", kg: "Бул өтө кымбат", desc: "Баа жогору.", note: "Арзаныраак: 'Do you have a cheaper one?'." },
+      { en: "I will take it", pron: "ай уил тэйк ит", kg: "Мен муну алам", desc: "Сатып алуу.", note: "Кассага барыңыз." },
+      { en: "Do you accept credit cards?", pron: "ду ю эк-сэпт крэ-дит кардз", kg: "Карталарды кабыл аласызбы?", desc: "Төлөм ыкмасы.", note: "Көп жерлерде бар." }
     ]
   },
   {
     category: "🗺️ Время и числа (Убакыт)",
     items: [
-      { en: "What time is it?", pron: "уот тайм из ит", kg: "Убакыт канча?", desc: "Убакытты суроо.", note: "Бейрасмий: 'Got the time?'" },
-      { en: "Today", pron: "ту-дэй", kg: "Бүгүн", desc: "Учурдагы күн.", note: "Эртең: 'Tomorrow' (ту-мо-роу)." },
-      { en: "Tomorrow", pron: "ту-мо-роу", kg: "Эртең", desc: "Кийинки күн.", note: "Бүрсүгүнү: 'Yesterday' (йес-тэ-дэй)." },
-      { en: "Yesterday", pron: "йес-тэ-дэй", kg: "Кечээ", desc: "Өткөн күн.", note: "Бүгүн: 'Today' (ту-дэй)." },
-      { en: "I am busy", pron: "ай эм би-зи", kg: "Мен бош эмесмин", desc: "Убакыт жоктугун билдирүү.", note: "Бош: 'I am free' (ай эм фри)." },
-      { en: "See you tomorrow", pron: "си ю ту-мо-роу", kg: "Эртең көрүшкөнчө", desc: "Эртең жолугушууну пландашканда.", note: "Достор менен." }
+      { en: "What time is it?", pron: "уот тайм из ит", kg: "Убакыт канча?", desc: "Убакытты суроо.", note: "Бейрасмий: 'Got the time?'." },
+      { en: "Today", pron: "ту-дэй", kg: "Бүгүн", desc: "Учурдагы күн.", note: "Эртең: 'Tomorrow'." },
+      { en: "Tomorrow", pron: "ту-мо-роу", kg: "Эртең", desc: "Кийинки күн.", note: "Кечээ: 'Yesterday'." },
+      { en: "Yesterday", pron: "йес-тэ-дэй", kg: "Кечээ", desc: "Өткөн күн.", note: "Бүгүн: 'Today'." },
+      { en: "I am busy", pron: "ай эм би-зи", kg: "Мен бош эмесмин", desc: "Убакыт жок.", note: "Бош: 'I am free'." },
+      { en: "See you tomorrow", pron: "си ю ту-мо-роу", kg: "Эртең көрүшкөнчө", desc: "Эртең жолугушуу.", note: "Достор менен." }
     ]
   },
   {
     category: "🏥 Здоровье (Ден соолук)",
     items: [
-      { en: "I have a headache", pron: "ай хэв э хэд-эйк", kg: "Менин башым ооруйт", desc: "Баш ооруну билдирүү.", note: "Дарыгерге кайрылыңыз." },
-      { en: "I have a fever", pron: "ай хэв э фи-вэ", kg: "Менин температурам бар", desc: "Дене температурасынын жогорулаганын билдирүү.", note: "Салкын тийүү белгиси." },
-      { en: "I need medicine", pron: "ай нид мэ-ди-син", kg: "Мага дары керек", desc: "Дарыканага барганда.", note: "Дарыкана: 'Pharmacy' (фар-ма-си)." }
+      { en: "I have a headache", pron: "ай хэв э хэд-эйк", kg: "Башым ооруйт", desc: "Баш оору.", note: "Дарыгерге кайрылыңыз." },
+      { en: "I have a fever", pron: "ай хэв э фи-вэ", kg: "Температурам бар", desc: "Температура.", note: "Салкын тийүү." },
+      { en: "I need medicine", pron: "ай нид мэ-ди-син", kg: "Мага дары керек", desc: "Дарыкана.", note: "Дарыкана: 'Pharmacy'." }
     ]
   },
   {
     category: "🏨 В отеле (Отелде)",
     items: [
-      { en: "I have a reservation", pron: "ай хэв э рэ-зэр-вэй-шэн", kg: "Менде бронь бар", desc: "Отелге келип, брондалган бөлмөңүздү айтуу.", note: "Паспортту көрсөтүңүз." },
-      { en: "What time is check-out?", pron: "уот тайм из чек-аут", kg: "Чыгуу убактысы канча?", desc: "Отелден чыгуу убактысын тактоо.", note: "Көбүнчө 12:00дө." },
-      { en: "Is breakfast included?", pron: "из брэк-фэст ин-клу-дид", kg: "Эртең мененки тамак кошулганбы?", desc: "Эртең мененки тамактын акысыз экендигин тактоо.", note: "Көп отелдерде кошулган." }
+      { en: "I have a reservation", pron: "ай хэв э рэ-зэр-вэй-шэн", kg: "Менде бронь бар", desc: "Отелге келип.", note: "Паспортту көрсөтүңүз." },
+      { en: "What time is check-out?", pron: "уот тайм из чек-аут", kg: "Чыгуу убактысы канча?", desc: "Чыгуу убактысы.", note: "Көбүнчө 12:00дө." },
+      { en: "Is breakfast included?", pron: "из брэк-фэст ин-клу-дид", kg: "Эртең мененки тамак кошулганбы?", desc: "Тамак кошулганбы.", note: "Көп отелдерде бар." }
     ]
   },
   {
     category: "🎉 Эмоции и чувства (Сезимдер)",
     items: [
-      { en: "I am happy", pron: "ай эм хэп-пи", kg: "Мен бактылуумун", desc: "Кубанычты билдирүү.", note: "Антоним: 'I am sad' (ай эм сэд) — 'Мен кайгылуумун'." },
-      { en: "I am tired", pron: "ай эм тай-эд", kg: "Мен чарчадым", desc: "Чарчоону билдирүү.", note: "Уктоо керек." },
-      { en: "I am angry", pron: "ай эм эн-гри", kg: "Мен ачууланам", desc: "Ачууну билдирүү.", note: "Тынчтанууга аракет кылыңыз." },
-      { en: "I miss you", pron: "ай мис ю", kg: "Мен сени сагындым", desc: "Сагынуу сезимин билдирүү.", note: "Жакын адамдарга айтылат." }
+      { en: "I am happy", pron: "ай эм хэп-пи", kg: "Мен бактылуумун", desc: "Кубаныч.", note: "Антоним: 'I am sad'." },
+      { en: "I am tired", pron: "ай эм тай-эд", kg: "Мен чарчадым", desc: "Чарчоо.", note: "Уктоо керек." },
+      { en: "I am angry", pron: "ай эм эн-гри", kg: "Мен ачууланам", desc: "Ачуу.", note: "Тынчтануу." },
+      { en: "I miss you", pron: "ай мис ю", kg: "Мен сени сагындым", desc: "Сагынуу.", note: "Жакын адамдарга." }
     ]
   },
   {
     category: "📱 Интернет и переписка (Интернет)",
     items: [
-      { en: "What's your Instagram?", pron: "уотс ё ин-стэ-грам", kg: "Инстаграмың ким?", desc: "Социалдык тармактардагы баракчаны суроо.", note: "Жаштар арасында кеңири колдонулат." },
-      { en: "I will text you", pron: "ай уил текст ю", kg: "Мен сага жазам", desc: "Билдирүү жөнөтөөрүңүздү айтуу.", note: "Достор менен." },
-      { en: "Call me", pron: "кол ми", kg: "Мага чал", desc: "Телефон чалууну суроо.", note: "Бейрасмий." }
+      { en: "What's your Instagram?", pron: "уотс ё ин-стэ-грам", kg: "Инстаграмың ким?", desc: "Социалдык тармак.", note: "Жаштар арасында." },
+      { en: "I will text you", pron: "ай уил текст ю", kg: "Мен сага жазам", desc: "Билдирүү жөнөтүү.", note: "Достор менен." },
+      { en: "Call me", pron: "кол ми", kg: "Мага чал", desc: "Телефон чалуу.", note: "Бейрасмий." }
     ]
   }
 ];
 
+let totalWords = 0;
+data.forEach(cat => totalWords += cat.items.length);
+
+let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+let learnedWords = JSON.parse(localStorage.getItem('learned')) || [];
+
 const container = document.getElementById('phrases');
+const favList = document.getElementById('favList');
 
 function render(filter = '') {
   container.innerHTML = '';
@@ -562,35 +609,66 @@ function render(filter = '') {
     filtered.forEach(item => {
       const p = document.createElement('div');
       p.className = 'phrase';
+      const isFav = favorites.includes(item.en);
       
-      const mainPart = document.createElement('div');
-      mainPart.className = 'phrase-main';
-      mainPart.innerHTML = `
-        <div class="en">
-          ${item.en} 
-          <span class="pronunciation">[${item.pron}]</span>
+      p.innerHTML = `
+        <div class="phrase-main">
+          <div class="phrase-content">
+            <div class="en">
+              ${item.en} 
+              <span class="pronunciation">[${item.pron}]</span>
+            </div>
+            <div class="kg">${item.kg}</div>
+          </div>
+          <div class="action-btns">
+            <button class="action-btn speak-btn" title="Угуу">🔊</button>
+            <button class="action-btn fav-btn ${isFav ? 'fav-active' : ''}" title="Сактоо">${isFav ? '❤️' : '🤍'}</button>
+          </div>
         </div>
-        <div class="kg">${item.kg}</div>
+        <div class="explanation">
+          <div class="explanation-content">
+            ${item.desc}
+            <span class="note">💡 ${item.note}</span>
+          </div>
+        </div>
       `;
       
-      const explPart = document.createElement('div');
-      explPart.className = 'explanation';
-      explPart.innerHTML = `
-        <div class="explanation-content">
-          ${item.desc}
-          <span class="note">💡 ${item.note}</span>
-        </div>
-      `;
+      const phraseContent = p.querySelector('.phrase-content');
       
-      p.appendChild(mainPart);
-      p.appendChild(explPart);
-      
-      p.onclick = () => {
+      phraseContent.onclick = () => {
         p.classList.toggle('active');
-        navigator.clipboard?.writeText(item.en);
+        if (!learnedWords.includes(item.en)) {
+          learnedWords.push(item.en);
+          localStorage.setItem('learned', JSON.stringify(learnedWords));
+          updateProgress();
+        }
+      };
+      
+      p.querySelector('.speak-btn').onclick = (e) => {
+        e.stopPropagation();
+        const btn = e.target;
+        btn.classList.add('speaking');
         
-        mainPart.style.background = 'rgba(56, 189, 248, 0.2)';
-        setTimeout(() => mainPart.style.background = '', 300);
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(item.en);
+        utterance.lang = 'en-US';
+        utterance.onend = () => btn.classList.remove('speaking');
+        window.speechSynthesis.speak(utterance);
+      };
+
+      const favBtn = p.querySelector('.fav-btn');
+      favBtn.onclick = (e) => {
+        e.stopPropagation();
+        if (favorites.includes(item.en)) {
+          favorites = favorites.filter(f => f !== item.en);
+          favBtn.classList.remove('fav-active');
+          favBtn.innerHTML = '🤍';
+        } else {
+          favorites.push(item.en);
+          favBtn.classList.add('fav-active');
+          favBtn.innerHTML = '❤️';
+        }
+        localStorage.setItem('favorites', JSON.stringify(favorites));
       };
       
       div.appendChild(p);
@@ -600,13 +678,115 @@ function render(filter = '') {
   });
 }
 
+function updateProgress() {
+  const progressBar = document.getElementById('progressBar');
+  const progressText = document.getElementById('progressText');
+  const percentage = (learnedWords.length / totalWords) * 100;
+  progressBar.style.width = `${percentage}%`;
+  progressText.innerText = `Үйрөнүлдү: ${learnedWords.length} / ${totalWords} сөз`;
+}
+
 let searchTimeout;
 document.getElementById('search').addEventListener('input', e => {
   clearTimeout(searchTimeout);
   searchTimeout = setTimeout(() => render(e.target.value), 150);
 });
 
+document.getElementById('themeToggle').onclick = () => {
+  document.body.classList.toggle('light-mode');
+  const isLight = document.body.classList.contains('light-mode');
+  document.getElementById('themeToggle').innerText = isLight ? '☀️ Тема' : '🌙 Тема';
+};
+
+const quizModal = document.getElementById('quizModal');
+const quizQuestion = document.getElementById('quizQuestion');
+const quizOptions = document.getElementById('quizOptions');
+const quizResult = document.getElementById('quizResult');
+
+document.getElementById('startQuiz').onclick = () => {
+  quizModal.classList.add('active');
+  startNewQuestion();
+};
+
+function startNewQuestion() {
+  quizResult.innerText = '';
+  quizOptions.innerHTML = '';
+  
+  const allItems = data.flatMap(cat => cat.items);
+  const randomItem = allItems[Math.floor(Math.random() * allItems.length)];
+  
+  quizQuestion.innerText = randomItem.kg;
+  
+  let wrongAnswers = [];
+  while(wrongAnswers.length < 3) {
+    const randomWrong = allItems[Math.floor(Math.random() * allItems.length)];
+    if (randomWrong.en !== randomItem.en && !wrongAnswers.includes(randomWrong.en)) {
+      wrongAnswers.push(randomWrong.en);
+    }
+  }
+  
+  const options = [randomItem.en, ...wrongAnswers].sort(() => Math.random() - 0.5);
+  
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.innerText = opt;
+    btn.onclick = () => {
+      if (opt === randomItem.en) {
+        btn.classList.add('correct');
+        quizResult.innerText = '✅ Туура!';
+        quizResult.style.color = '#16a34a';
+      } else {
+        btn.classList.add('wrong');
+        quizResult.innerText = '❌ Туура эмес. Туура жооп: ' + randomItem.en;
+        quizResult.style.color = '#dc2626';
+      }
+      Array.from(quizOptions.children).forEach(b => b.disabled = true);
+      setTimeout(startNewQuestion, 2000);
+    };
+    quizOptions.appendChild(btn);
+  });
+}
+
+const favModal = document.getElementById('favModal');
+
+document.getElementById('showFavorites').onclick = () => {
+  favModal.classList.add('active');
+  renderFavList();
+};
+
+function renderFavList() {
+  favList.innerHTML = '';
+  if (favorites.length === 0) {
+    favList.innerHTML = '<div class="fav-empty">Сүйүктүүлөр тизмеси бош. Сөздөрдүн жанындагы ❤️ белгисин басып кошуңуз.</div>';
+    return;
+  }
+  const allItems = data.flatMap(cat => cat.items);
+  favorites.forEach(favEn => {
+    const item = allItems.find(i => i.en === favEn);
+    if (item) {
+      const div = document.createElement('div');
+      div.className = 'fav-item';
+      div.innerHTML = `
+        <div>
+          <div class="en">${item.en}</div>
+          <div class="kg">${item.kg}</div>
+        </div>
+        <button class="action-btn speak-btn" title="Угуу">🔊</button>
+      `;
+      div.querySelector('.speak-btn').onclick = () => {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(item.en);
+        utterance.lang = 'en-US';
+        window.speechSynthesis.speak(utterance);
+      };
+      favList.appendChild(div);
+    }
+  });
+}
+
 render();
+updateProgress();
 </script>
 </body>
 </html>
